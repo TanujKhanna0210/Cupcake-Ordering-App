@@ -11,10 +11,10 @@ class OrderViewModel:ViewModel() {
     private val _quantity = MutableLiveData<Int>(0)
     val quantity : LiveData<Int> = _quantity
 
-    private val _flavor = MutableLiveData<String>(" ")
+    private val _flavor = MutableLiveData<String>("")
     val flavor : LiveData<String> = _flavor
 
-    private val _date = MutableLiveData<String>(" ")
+    private val _date = MutableLiveData<String>("")
     val date : LiveData<String> = _date
 
     private val _price = MutableLiveData<Double>(0.0)
