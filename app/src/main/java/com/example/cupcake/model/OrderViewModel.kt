@@ -1,11 +1,17 @@
 package com.example.cupcake.model
 
 import android.Manifest.permission_group.CALENDAR
+import android.view.animation.Transformation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
+
+private const val PRICE_PER_CUPCAKE = 2.00
+private const val PRICE_FOR_SAME_DAY_PICKUP = 3.00
 
 class OrderViewModel:ViewModel() {
     private val _quantity = MutableLiveData<Int>(0)
@@ -18,12 +24,15 @@ class OrderViewModel:ViewModel() {
     val date : LiveData<String> = _date
 
     private val _price = MutableLiveData<Double>(0.0)
-    val price : LiveData<Double> = _price
+    val price : LiveData<String> = Transformations.map(_price){
+        NumberFormat.getInstance().format(it)
+    }
 
     val dateOptions = getPickUpOptions()
 
     fun setQuantity(numberCupcakes:Int){
         _quantity.value = numberCupcakes
+        updatePrice()
     }
 
     fun setFlavor(DesiredFlavor:String){
@@ -32,6 +41,7 @@ class OrderViewModel:ViewModel() {
 
     fun setDate(pickUpDate:String){
         _date.value = pickUpDate
+        updatePrice()
     }
 
     fun hasNoFlavorSet() : Boolean {
@@ -47,5 +57,13 @@ class OrderViewModel:ViewModel() {
             calender.add(Calendar.DATE,1)
         }
         return options
+    }
+
+    private fun updatePrice(){
+        var calculatedPrice = (quantity.value ?: 0) * PRICE_PER_CUPCAKE
+        if(_date.value == dateOptions[0]){
+            calculatedPrice += PRICE_FOR_SAME_DAY_PICKUP
+        }
+        _price.value=calculatedPrice
     }
 }
