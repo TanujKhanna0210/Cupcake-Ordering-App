@@ -14,21 +14,25 @@ private const val PRICE_PER_CUPCAKE = 2.00
 private const val PRICE_FOR_SAME_DAY_PICKUP = 3.00
 
 class OrderViewModel:ViewModel() {
-    private val _quantity = MutableLiveData<Int>(0)
+    private val _quantity = MutableLiveData<Int>()
     val quantity : LiveData<Int> = _quantity
 
-    private val _flavor = MutableLiveData<String>("")
+    private val _flavor = MutableLiveData<String>()
     val flavor : LiveData<String> = _flavor
 
-    private val _date = MutableLiveData<String>("")
+    val dateOptions: List<String> = getPickUpOptions()
+
+    private val _date = MutableLiveData<String>()
     val date : LiveData<String> = _date
 
-    private val _price = MutableLiveData<Double>(0.0)
+    private val _price = MutableLiveData<Double>()
     val price : LiveData<String> = Transformations.map(_price){
-        NumberFormat.getInstance().format(it)
+        NumberFormat.getCurrencyInstance().format(it)
     }
 
-    val dateOptions = getPickUpOptions()
+    init {
+        resetOrder()
+    }
 
     fun setQuantity(numberCupcakes:Int){
         _quantity.value = numberCupcakes
@@ -46,6 +50,13 @@ class OrderViewModel:ViewModel() {
 
     fun hasNoFlavorSet() : Boolean {
         return _flavor.value.isNullOrEmpty()
+    }
+
+    fun resetOrder(){
+        _quantity.value = 0
+        _flavor.value = ""
+        _date.value = dateOptions[0]
+        _price.value = 0.0
     }
 
     private fun getPickUpOptions() : List<String> {
